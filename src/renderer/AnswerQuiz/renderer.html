@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <h1>Lista de Questões</h1>
+  <ul id="quizzes-list"></ul>
+  <button id="prev-btn" onclick="prevPage()">Anterior</button>
+  <button id="next-btn" onclick="nextPage()">Próximo</button>
+  <select id="limit-select" onchange="changeLimit()">
+    <option value="5" selected>5</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+  </select>
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

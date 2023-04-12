@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const process = require('dotenv')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -40,6 +41,22 @@ ipcMain.on('login', async (event, { username, password }) => {
     event.reply('loginResponse', { success: false });
   }
 });
+
+ipcMain.on('getQuizzes', async (event, { page, limit }) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/v1/quizzes?limit=${limit}&page=${page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    event.reply('getQuizzesResponse', { success: true, quizzes: data });
+  } catch (error) {
+    event.reply('getQuizzesResponse', { success: false, error: 'Erro ao obter quizzes' });
+  }
+});
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

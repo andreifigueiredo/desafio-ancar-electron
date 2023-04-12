@@ -11,6 +11,7 @@ ipcRenderer.on('loginResponse', (event, { success, token }) => {
   console.log("ESTÁ BATENDO AQUI", event, success, token);
   if (success) {
     localStorage.setItem('token', token);
+    window.location.href = '../ListQuizzes/renderer.html';
   } else {
   }
 });
