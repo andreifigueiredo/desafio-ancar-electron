@@ -1,0 +1,15 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-control {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.btn-block {
+  width: 100%;
+}

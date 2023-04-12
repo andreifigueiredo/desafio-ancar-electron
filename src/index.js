@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -13,15 +13,33 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, './renderer/Login/renderer.html'));
+  
+  // mainWindow.loadURL('http://localhost:8080');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
+
+ipcMain.on('login', async (event, { username, password }) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await response.json();
+    event.reply('loginResponse', { success: true, token: data.token });
+  } catch (error) {
+    event.reply('loginResponse', { success: false });
+  }
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -36,8 +54,6 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-
-win.loadURL('http://localhost:8080');
 
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
