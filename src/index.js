@@ -35,10 +35,15 @@ ipcMain.on('login', async (event, { username, password }) => {
       body: JSON.stringify({ username, password }),
       headers: { 'Content-Type': 'application/json' },
     });
-    const data = await response.json();
-    event.reply('loginResponse', { success: true, token: data.token });
+    if (response.ok) {
+      const data = await response.json();
+      event.reply('loginResponse', { success: true, token: data.token }); 
+    } else {
+      const errorData = await response.json();
+      event.reply('loginResponse', { success: false, error: errorData.message });
+    }
   } catch (error) {
-    event.reply('loginResponse', { success: false });
+    event.reply('loginResponse', { success: false, error });
   }
 });
 
@@ -50,10 +55,15 @@ ipcMain.on('getQuizzes', async (event, { page, limit }) => {
         'Content-Type': 'application/json'
       }
     });
-    const data = await response.json();
-    event.reply('getQuizzesResponse', { success: true, quizzes: data });
+    if (response.ok) {
+      const data = await response.json();
+      event.reply('getQuizzesResponse', { success: true, quizzes: data }); 
+    } else {
+      const errorData = await response.json();
+      event.reply('getQuizzesResponse', { success: false, error: errorData.message });
+    }
   } catch (error) {
-    event.reply('getQuizzesResponse', { success: false, error: 'Erro ao obter quizzes' });
+    event.reply('getQuizzesResponse', { success: false, error });
   }
 });
 
@@ -66,10 +76,15 @@ ipcMain.on('getQuiz', async (event, { id, page, limit, token }) => {
         'Authorization': `Bearer ${token}`
       }
     });
-    const data = await response.json();
-    event.reply('getQuizResponse', { success: true, quiz: data });
+    if (response.ok) {
+      const data = await response.json();
+      event.reply('getQuizResponse', { success: true, quiz: data }); 
+    } else {
+      const errorData = await response.json();
+      event.reply('getQuizResponse', { success: false, error: errorData.message });
+    }
   } catch (error) {
-    event.reply('getQuizResponse', { success: false, error: 'Erro ao obter quizzes' });
+    event.reply('getQuizResponse', { success: false, error });
   }
 });
 
@@ -83,10 +98,15 @@ ipcMain.on('createAnswers', async (event, { id, answers, token }) => {
         'Authorization': `Bearer ${token}`
       }
     });
-    const data = await response.json();
-    event.reply('createAnswersResponse', { success: true, quiz: data });
+    if (response.ok) {
+      const data = await response.json();
+      event.reply('createAnswersResponse', { success: true, quiz: data }); 
+    } else {
+      const errorData = await response.json();
+      event.reply('createAnswersResponse', { success: false, error: errorData.message });
+    }
   } catch (error) {
-    event.reply('createAnswersResponse', { success: false, error: 'Erro ao obter quizzes' });
+    event.reply('createAnswersResponse', { success: false, error });
   }
 });
 

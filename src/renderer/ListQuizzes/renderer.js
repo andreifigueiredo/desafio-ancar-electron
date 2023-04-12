@@ -22,11 +22,11 @@ function updateQuizzesList(quizzes) {
   });
 }
 
-ipcRenderer.on('getQuizzesResponse', (event, response) => {
+ipcRenderer.on('getQuizzesResponse', (event, response, error) => {
   if (response.success) {
     updateQuizzesList(response.quizzes);
   } else {
-    console.error(response.error);
+    alert(error)
   }
 });
 

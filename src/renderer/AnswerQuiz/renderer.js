@@ -47,11 +47,11 @@ function createQuestionList(questions) {
   });
 }
 
-ipcRenderer.on('getQuizResponse', (event, response) => {
+ipcRenderer.on('getQuizResponse', (event, response, error) => {
   if (response.success) {
     createQuestionList(response.quiz.questions);
   } else {
-    console.error(response.error);
+    alert(error)
   }
 });
 
@@ -93,10 +93,11 @@ function submitAnswers(questionIds, answerValues) {
   ipcRenderer.send('createAnswers', { id, answers, token });
 }
 
-ipcRenderer.on('createAnswersResponse', (event, { success, quiz }) => {
+ipcRenderer.on('createAnswersResponse', (event, { success, error }) => {
   if (success) {
     window.location.href = '../Success/renderer.html';
   } else {
+    alert(error)
   }
 });
 

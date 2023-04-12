@@ -7,10 +7,11 @@ function handleLogin() {
   ipcRenderer.send('login', { username, password });
 }
 
-ipcRenderer.on('loginResponse', (event, { success, token }) => {
+ipcRenderer.on('loginResponse', (event, { success, token, error }) => {
   if (success) {
     localStorage.setItem('token', token);
     window.location.href = '../ListQuizzes/renderer.html';
   } else {
+    alert(error)
   }
 });
