@@ -2,54 +2,102 @@ const { ipcRenderer } = require('electron');
 
 let currentPage = 1;
 let limit = 5;
+const token = localStorage.getItem('token');
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
 
-function updateQuizzesList(quizzes) {
-  const quizzesList = document.getElementById('quizzes-list');
-  quizzesList.innerHTML = '';
+function createQuestionList(questions) {
+  const questionList = document.getElementById('question-list');
+  questionList.innerHTML = '';
 
-  quizzes.forEach((quiz) => {
-    const quizItem = document.createElement('li');
-    quizItem.textContent = quiz.name + ' - ' + quiz.description;
+  questions.forEach(question => {
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question';
 
-    const quizButton = document.createElement('button');
-    quizButton.textContent = 'Responder';
-    quizButton.addEventListener('click', () => {
-      window.location.href = `respostaQuiz.html?id=${quiz.id}`;
-    });
+    const questionDesc = document.createElement('p');
+    questionDesc.innerText = `Pergunta: ${question.description}`;
+    questionDiv.appendChild(questionDesc);
 
-    quizItem.appendChild(quizButton);
-    quizzesList.appendChild(quizItem);
+    const form = document.createElement('form');
+    questionDiv.appendChild(form);
+
+    const answerInput = document.createElement('input');
+    answerInput.type = 'text';
+    answerInput.className = 'answer-input';
+    form.appendChild(answerInput);
+
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'questionId';
+    hiddenInput.value = question.id;
+    form.appendChild(hiddenInput);
+
+    questionList.appendChild(questionDiv);
+  });
+
+  const submitButton = document.createElement('button');
+  submitButton.type = 'button';
+  submitButton.innerText = 'Enviar';
+  questionList.appendChild(submitButton);
+
+  submitButton.addEventListener('click', () => {
+    const answers = Array.from(questionList.querySelectorAll('.answer-input')).map(input => input.value);
+    const questionIds = Array.from(questionList.querySelectorAll('input[type="hidden"]')).map(input => input.value);
+    submitAnswers(questionIds, answers);
   });
 }
 
-ipcRenderer.on('getQuizzesResponse', (event, response) => {
+ipcRenderer.on('getQuizResponse', (event, response) => {
   if (response.success) {
-    updateQuizzesList(response.quizzes);
+    createQuestionList(response.quiz.questions);
   } else {
     console.error(response.error);
   }
 });
 
-async function getQuizzes() {
-  ipcRenderer.send('getQuizzes', { page: currentPage, limit });
+async function getQuiz() {  
+  ipcRenderer.send('getQuiz', { id, page: currentPage, limit, token });
+}
+
+function goList() {
+  window.location.href = '../ListQuizzes/renderer.html';
 }
 
 function prevPage() {
   if (currentPage > 1) {
     currentPage--;
-    getQuizzes();
+    getQuiz();
   }
 }
 
 function nextPage() {
   currentPage++;
-  getQuizzes();
+  getQuiz();
 }
 
 function changeLimit() {
   limit = parseInt(document.getElementById('limit-select').value);
   currentPage = 1;
-  getQuizzes();
+  getQuiz();
 }
 
-getQuizzes();
+function submitAnswers(questionIds, answerValues) {
+  const answers = [];
+  for (let i = 0; i < questionIds.length; i++) {
+    const answer = {
+      questionId: questionIds[i],
+      description: answerValues[i]
+    };
+    answers.push(answer);
+  }
+  ipcRenderer.send('createAnswers', { id, answers, token });
+}
+
+ipcRenderer.on('createAnswersResponse', (event, { success, quiz }) => {
+  if (success) {
+    window.location.href = '../Success/renderer.html';
+  } else {
+  }
+});
+
+getQuiz();

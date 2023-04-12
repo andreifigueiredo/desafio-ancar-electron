@@ -57,6 +57,39 @@ ipcMain.on('getQuizzes', async (event, { page, limit }) => {
   }
 });
 
+ipcMain.on('getQuiz', async (event, { id, page, limit, token }) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/v1/quizzes/${id}/answers?limit=${limit}&page=${page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await response.json();
+    event.reply('getQuizResponse', { success: true, quiz: data });
+  } catch (error) {
+    event.reply('getQuizResponse', { success: false, error: 'Erro ao obter quizzes' });
+  }
+});
+
+ipcMain.on('createAnswers', async (event, { id, answers, token }) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/v1/quizzes/${id}/answers`, {
+      method: 'POST',
+      body: JSON.stringify(answers),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await response.json();
+    event.reply('createAnswersResponse', { success: true, quiz: data });
+  } catch (error) {
+    event.reply('createAnswersResponse', { success: false, error: 'Erro ao obter quizzes' });
+  }
+});
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
