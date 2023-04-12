@@ -2,21 +2,14 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="../../styles.css">
+  <title>Responda o Questionário</title>
 </head>
+
 <body>
-  <h1>Lista de Questões</h1>
-  <ul id="quizzes-list"></ul>
-  <button id="prev-btn" onclick="prevPage()">Anterior</button>
-  <button id="next-btn" onclick="nextPage()">Próximo</button>
-  <select id="limit-select" onchange="changeLimit()">
-    <option value="5" selected>5</option>
-    <option value="10">10</option>
-    <option value="20">20</option>
-    <option value="50">50</option>
-  </select>
+  <h1>Responda o Questionário</h1>
+  <div id="questions-container"></div>
+  <button id="submit-btn" onclick="submitAnswers()">Enviar Respostas</button>
+  <div id="success-message" style="display: none;">Respostas enviadas com sucesso!</div>
   <script src="./renderer.js"></script>
 </body>
-
 </html>

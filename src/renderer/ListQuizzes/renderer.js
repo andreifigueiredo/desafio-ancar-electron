@@ -31,7 +31,6 @@ ipcRenderer.on('getQuizzesResponse', (event, response) => {
 });
 
 async function getQuizzes() {
-  console.log(limit, currentPage);
   ipcRenderer.send('getQuizzes', { page: currentPage, limit });
 }
 
